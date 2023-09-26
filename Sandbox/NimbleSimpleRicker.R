@@ -52,6 +52,10 @@ LambertW <- nimbleFunction(
 
 ## I honestly have never run one of these before so don't really know much about it.
 ## Best interpretation from TMB code.
+
+## Basic model is: log(R/S)=log(a)*S*exp(-b*S)
+# a > 0, b > 0
+
 nimbleCode(
   ##priors
   alpha ~ dnorm(mean=1.5, sd=2.5)
