@@ -8,6 +8,8 @@ library(nimble)
 
 ## Make lambertW function. Not super familiar with this code but
 ## getting same answer as wolfram alpha.
+## "An explicit solution for calculating optimum spawning stock size from Ricker’s 
+## stock recruitment model"
 LambertW <- nimbleFunction(
   setup = function(){}, ## To run in a nimble model can't have setup code.
   ## Seems like alpha is transformed so can just do that here.
@@ -61,6 +63,7 @@ nimbleCode(
   alpha ~ dnorm(mean=1.5, sd=2.5)
   logbeta ~ dnorm(logb_p_mean,logb_p_sd)
   beta <- exp(beta)
+  # the spawning stock size leading to maximum recruit production (SMSR) 
   Smax <- 1/beta
   logSigObs ~ dnorm(0, sd=5)  ## Prior from RickerModels code.
   SigObs <- exp(logSigObs)
@@ -73,8 +76,11 @@ nimbleCode(
     obs_logR[i] ~ dnorm(pred_logR[i], sd = SigObs);
   }
   
-  ## Don't know what umsy or Smsy is...
+  ## UMSY=bSMSY
   umsy <- (1 - LambertW(1-alpha,1))
-  Smsy <- umsy*Smax
+  ## Hilborn version
   # umsy <- 0.5 * alpha - 0.07 * (alpha)^2
+  
+  ## The maximum sustainable yield
+  Smsy <- umsy*Smax
 )
