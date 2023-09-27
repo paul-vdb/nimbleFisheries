@@ -4,21 +4,18 @@ library(nimble)
 
 ## Copy of Ricker_simple.cpp 
 ## https://github.com/Pacific-salmon-assess/samEst/blob/main/src/Ricker_simple.cpp
-## Some weird things going on in that basic model.
 
-## Make lambertW function. Not super familiar with this code but
-## getting same answer as wolfram alpha.
-## "An explicit solution for calculating optimum spawning stock size from Ricker’s 
-## stock recruitment model"
+## Make lambertW function.
+## Use Newton's Method with precision 1e-9 
 LambertW <- nimbleFunction(
   setup = function(){}, ## To run in a nimble model can't have setup code.
-  ## Seems like alpha is transformed so can just do that here.
   run = function(x = double(), log = integer(0, default = 0)){ 
     if(log == 1) {
       logx <- x
     }else{
         logx <- log(x)
     }
+    ## Choose a positive starting value.
     y <- logx
     if(logx < 0) y <- 0
     done <- 0L
@@ -52,12 +49,10 @@ LambertW <- nimbleFunction(
 # lambertC$gr_lambertW(1)
 
 
-## I honestly have never run one of these before so don't really know much about it.
-## Best interpretation from TMB code.
-
 ## Basic model is: log(R/S)=log(a)*S*exp(-b*S)
 # a > 0, b > 0
-
+## "An explicit solution for calculating optimum spawning stock size from Ricker’s 
+## stock recruitment model" Information for how LambertsW is used.
 nimbleCode(
   ##priors
   alpha ~ dnorm(mean=1.5, sd=2.5)
